@@ -172,9 +172,7 @@ export const useStore = create((set, get) => {
       }
 
       // Supabase Auth Check
-      try {
-        const { data: { session } } = await supabase.auth.getSession()
-        
+      supabase.auth.onAuthStateChange(async (event, session) => {
         if (session?.user) {
           get().setUser({
             id: session.user.id,
@@ -186,12 +184,23 @@ export const useStore = create((set, get) => {
           if (get().S.reminder?.on && get().S.reminder.tz !== tz) {
             get().update(s => { s.reminder = { ...s.reminder, tz } })
           }
-        } else {
+        } else if (event === 'SIGNED_OUT') {
           get().setUser(null)
+        }
+      })
+
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        
+        if (session?.user) {
+          get().setUser({
+            id: session.user.id,
+            email: session.user.email
+          })
+          await get().pullState()
         }
       } catch (e) {
         console.error('Boot error:', e)
-        get().setUser(null)
       }
       set({ ready: true })
     }
