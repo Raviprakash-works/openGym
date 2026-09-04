@@ -22,14 +22,20 @@ export default function Login() {
     setLoading(true)
     const { error } = await supabase.auth.signInWithOtp({
       email: email.trim(),
+      options: {
+        shouldCreateUser: true,
+        emailRedirectTo: null,  // force OTP code, not magic link
+      }
     })
     setLoading(false)
     
     if (error) {
+      // Show the full error so we can diagnose
       useUI.getState().toast(error.message || t('Failed to send login code'))
+      console.error('OTP send error:', error)
     } else {
       setStep(2)
-      useUI.getState().toast(t('Login code sent!'))
+      useUI.getState().toast(t('Check your email for the login code!'))
     }
   }
 
@@ -48,6 +54,7 @@ export default function Login() {
 
     if (error) {
       useUI.getState().toast(error.message || t('Invalid login code'))
+      console.error('OTP verify error:', error)
     } else if (data?.session) {
       setUser({ id: data.session.user.id, email: data.session.user.email })
       await pullState()
