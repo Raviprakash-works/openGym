@@ -14,6 +14,8 @@ import Icon from '../components/Icon.jsx'
 import { Button, Check, NumberField } from '../components/ui.jsx'
 import { nextPrescription, applyPrescription } from '../lib/progression.js'
 import { glyphOf } from '../lib/glyphs.js'
+import FeedbackModal from '../components/FeedbackModal.jsx'
+import SubstituteSheet from '../components/SubstituteSheet.jsx'
 
 /* ---------- start chooser (no active workout) ---------- */
 function StartChooser() {
@@ -112,7 +114,10 @@ function ExerciseBlock({ entryIdx, compact, onToggle, onField, onAddSet, onRemov
     <Media ex={ex} key={entry.id} compact={compact} minimizable />
     <div className="row between" style={{ marginBottom: 6 }}>
       <div style={{ fontSize: compact ? 17 : 20, fontWeight: 600, letterSpacing: '-.02em', textTransform: 'capitalize', lineHeight: 1.2 }}>{ex.n}</div>
-      <button className="iconbtn" aria-label={t('Details')} onClick={() => exerciseDetailSheet(ex)}><Icon name="info" /></button>
+      <div className="row" style={{ gap: 4 }}>
+        {onSubstitute && <button className="iconbtn" style={{ fontSize: 14, color: 'var(--text-3)' }} aria-label={t('Substitute exercise')} title={t('Substitute exercise')} onClick={onSubstitute}><Icon name="shuffle" /></button>}
+        <button className="iconbtn" aria-label={t('Details')} onClick={() => exerciseDetailSheet(ex)}><Icon name="info" /></button>
+      </div>
     </div>
     <div className="row" style={{ gap: 6, flexWrap: 'wrap', marginBottom: 8 }}>
       {cardio && <span className="tag acc"><Icon name="figureRun" />{t('Cardio')}</span>}
@@ -167,6 +172,9 @@ function ActiveWorkout() {
   const unitIdx = units.findIndex(u => u === unit)
   const isSuperset = unit.length > 1
 
+  const [feedbackFor, setFeedbackFor] = useState(null)   // { entryIdx, exName } when modal is open
+  const [substituteFor, setSubstituteFor] = useState(null) // entryIdx when sub sheet open
+
   const total = A.entries.reduce((n, e) => n + e.sets.length, 0)
   const done = setsDoneActive(A)
 
@@ -211,20 +219,47 @@ function ActiveWorkout() {
         const unitDone = unit.every(ui => (ui === idx ? e : A.entries[ui]).sets.every(x => x.done))
         if (isLastExInUnit && !unitDone) startRest(S.restSec)
         else if (unitDone) stopRest()
-        if (unitDone && isLastUnit) workoutDone = true      // last exercise's last set → done
-        // Only loaded reps training has a "working weight" worth confirming — a bodyweight
-        // plank has nothing to put in that slider, and neither does a set of push-ups
-        // (issue #32: the fewest taps that still record what happened).
+        if (unitDone && isLastUnit) workoutDone = true
         const loaded = m === 'reps' && !(isBw({ ...(e.target || {}), id: e.id }) && !e.sets.some(x => x.w > 0))
         if (e.sets.every(x => x.done)) { exJustDone = true; if (loaded && !e.asked) { e.asked = true; askTop = true } }
       }
     })
-    // reps: topWeight first (it chains into the finish/continue prompt on the last unit).
-    // cardio/timed or already-confirmed: go straight to the prompt.
     if (askTop) topWeightSheet(idx)
     else if (workoutDone) workoutCompleteSheet()
     else if (exJustDone && cardioEntry) useUI.getState().toast(t('Cardio logged'))
     else if (exJustDone && m === 'time') useUI.getState().toast(t('Hold logged'))
+    // Show feedback modal after exercise is done (not on un-check, not cardio/timed)
+    if (exJustDone && m === 'reps' && !workoutDone) {
+      const exName = exOr(A.entries[idx].id).n
+      setFeedbackFor({ entryIdx: idx, exName })
+    }
+  }
+
+  // Save feedback ratings to all completed sets of an exercise
+  const saveFeedback = (entryIdx, feeling, notes) => {
+    if (feeling) {
+      mutEntry(entryIdx, e => {
+        e.sets.forEach(s => { if (s.done && !s.feedback) s.feedback = feeling })
+        if (notes) e.sessionNotes = notes
+      })
+    }
+    setFeedbackFor(null)
+    // Advance to next exercise
+    const nextUnitIdx = unitIdx + 1
+    if (nextUnitIdx < units.length) {
+      update(s => { s.active.cur = units[nextUnitIdx][0] })
+    }
+  }
+
+  // Substitute an exercise mid-workout
+  const handleSubstitute = (entryIdx, newExId) => {
+    mutEntry(entryIdx, e => {
+      e.substitutedFor = e.substitutedFor || e.id
+      e.id = newExId
+      // Reset sets to defaults for new exercise
+      e.sets = e.sets.map(s => ({ ...s, done: false }))
+    })
+    setSubstituteFor(null)
   }
 
   // Live-presence heartbeat so the admin dashboard can show who's training now. Signed-in only —
@@ -270,11 +305,14 @@ function ActiveWorkout() {
           {unit.map((idx, k) => <div key={idx} className="ss-ex">
             {k > 0 && <div className="ss-amp">+</div>}
             <ExerciseBlock entryIdx={idx} compact
+              onSubstitute={() => setSubstituteFor(idx)}
               onToggle={i => toggle(idx, i)} onField={(i, f, v) => setField(idx, i, f, v)} onAddSet={() => addSet(idx)} onRemoveSet={() => removeSet(idx)} onStartTimed={i => startTimed(idx, i)} />
           </div>)}
         </div>
       ) : (
-        <ExerciseBlock entryIdx={cur} onToggle={i => toggle(cur, i)} onField={(i, f, v) => setField(cur, i, f, v)} onAddSet={() => addSet(cur)} onRemoveSet={() => removeSet(cur)} onStartTimed={i => startTimed(cur, i)} />
+        <ExerciseBlock entryIdx={cur}
+          onSubstitute={() => setSubstituteFor(cur)}
+          onToggle={i => toggle(cur, i)} onField={(i, f, v) => setField(cur, i, f, v)} onAddSet={() => addSet(cur)} onRemoveSet={() => removeSet(cur)} onStartTimed={i => startTimed(cur, i)} />
       )}
     </> : <div className="empty"><div className="ico"><Icon name="shuffle" /></div>{t('Freestyle workout — add your first exercise.')}</div>}
 
@@ -299,6 +337,23 @@ function ActiveWorkout() {
       </button>
     })()}
     <div style={{ height: 40 }} />
+
+    {/* Feedback modal — appears after finishing all sets of an exercise */}
+    {feedbackFor && (
+      <FeedbackModal
+        exName={feedbackFor.exName}
+        onDone={(feeling, notes) => saveFeedback(feedbackFor.entryIdx, feeling, notes)}
+      />
+    )}
+
+    {/* Substitute sheet — appears when shuffle icon is tapped */}
+    {substituteFor !== null && (
+      <SubstituteSheet
+        currentExId={A.entries[substituteFor]?.id}
+        onSelect={newId => handleSubstitute(substituteFor, newId)}
+        onClose={() => setSubstituteFor(null)}
+      />
+    )}
   </div>
 }
 

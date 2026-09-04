@@ -9,6 +9,8 @@ import LineChart from '../components/LineChart.jsx'
 import Icon from '../components/Icon.jsx'
 import { Button } from '../components/ui.jsx'
 import { glyphOf } from '../lib/glyphs.js'
+import MissedDayBanner from '../components/MissedDayBanner.jsx'
+import CoachSuggestions from '../components/CoachSuggestions.jsx'
 
 // Home = what to do now + a quick glance. Deep charts & history live in Stats.
 export default function Home() {
@@ -85,6 +87,12 @@ export default function Home() {
         <div style={{ height: 8 }} /><Button onClick={() => nav('/plan')}>{t('Build my own plan')}</Button>
       </div>
     )}
+
+    {/* Missed day banner — shown when a planned session was skipped */}
+    {S.routines.length > 0 && !S.active && <MissedDayBanner />}
+
+    {/* Coach suggestions — smart auto-regulation tips */}
+    {S.workouts.length > 3 && <CoachSuggestions />}
 
     <div className="card">
       <div className="row between" style={{ marginBottom: 6 }}>
