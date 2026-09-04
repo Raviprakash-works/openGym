@@ -74,7 +74,25 @@ export default function Settings() {
 
     {/* ---------- account (demo and mobile builds have nothing to sign in to) ---------- */}
     <Section title={MOBILE ? t('Your data') : DEMO ? t('Demo') : t('Account')}>
-      {MOBILE ? <>
+        
+        {/* ChatGPT Migration Button */}
+        {user && <Row icon="sparkles" iconTint="var(--blue)" title={t('Import Historical Data')} subtitle={t('Populate openGym with your ChatGPT workout history.')} accessory="chevron"
+          onClick={async () => {
+            const { migrationState } = await import('../lib/migrationData.js')
+            update(s => {
+              s.workouts = migrationState.workouts
+              s.routines = migrationState.routines
+              s.week = migrationState.week
+              s.customEx = migrationState.customEx
+              s.bodyweight = migrationState.bodyweight
+              s.effort = migrationState.effort
+            })
+            await pushState()
+            toast(t('History imported!'))
+            nav('/home')
+          }} />}
+
+        {MOBILE ? <>
         <Row icon="lock" iconTint="var(--acc)" title={t('All data stays on this phone')} subtitle={t('No account, no cloud — back it up anytime with Export below.')} />
         <Row icon="rocket" iconTint="var(--indigo)" title={t('Self-host openGym')} subtitle={t('Passkey sign-in, sync across your devices, your own data.')} accessory="chevron"
           onClick={() => window.open(REPO, '_blank', 'noopener')} />
