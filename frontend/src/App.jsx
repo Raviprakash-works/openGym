@@ -16,6 +16,7 @@ import Toast from './components/Toast.jsx'
 import RestTimer from './components/RestTimer.jsx'
 import OfflineBanner from './components/OfflineBanner.jsx'
 import InstallPrompt from './components/InstallPrompt.jsx'
+import UpdateBanner from './components/UpdateBanner.jsx'
 import Login from './views/Login.jsx'
 import Home from './views/Home.jsx'
 import Plan from './views/Plan.jsx'
@@ -76,6 +77,7 @@ function Shell() {
   return (
     <>
       <OfflineBanner />
+      <UpdateBanner />
       {/* keyed on the route: a view that throws is contained, and switching tabs
           re-mounts the boundary, so the tab bar is always a way out */}
       <div id="app" className="vfade" key={loc.pathname}>

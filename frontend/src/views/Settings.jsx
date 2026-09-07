@@ -66,6 +66,25 @@ export default function Settings() {
     },
   })
 
+  const forceUpdate = async () => {
+    toast(t('Checking for updates...'))
+    try {
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations()
+        for (const reg of regs) {
+          await reg.update()
+        }
+        const keys = await caches.keys()
+        await Promise.all(keys.filter(k => !k.includes('media')).map(k => caches.delete(k)))
+      }
+    } catch (e) {
+      console.warn('Update check failed', e)
+    }
+    setTimeout(() => {
+      window.location.reload()
+    }, 200)
+  }
+
   return <div className="narrow">
     <div className="hdr">
       <button className="iconbtn" onClick={() => nav('/home')} aria-label={t('Home')}><Icon name="chevronLeft" /></button>
@@ -204,6 +223,14 @@ export default function Settings() {
     {/* Reset after reading so picking the same file twice still fires onChange. */}
     <input ref={importRef} type="file" accept=".csv,.xml,text/csv,text/xml" style={{ display: 'none' }}
       onChange={ev => { const f = ev.target.files[0]; if (f) importFromApp(f); ev.target.value = '' }} />
+
+    {!MOBILE && <Section title={t('App & Updates')} footer={t('Installed on your phone? Tap above anytime to instantly pull the latest features from GitHub without reinstalling.')}>
+      <Row icon="sparkles" iconTint="var(--acc)"
+        title={t('Check for updates / Refresh app')}
+        subtitle={t('Clears old cached code and reloads latest version')}
+        accessory="chevron"
+        onClick={forceUpdate} />
+    </Section>}
 
     {/* "Add to Home screen" makes no sense inside the native app */}
     {!MOBILE && <Section title={t('Tip')}>
