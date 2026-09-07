@@ -14,10 +14,10 @@ const M = {
   ropePushdown:   '2406',   // Rope Triceps Pushdown
   latPulldown:    '2330',   // Lat Pulldown
   neutralLatPD:   '2330',   // Neutral-Grip Lat Pulldown (same machine)
-  oneArmRow:      '0861',   // One-Arm Dumbbell Row (using seated row ID)
+  oneArmRow:      '0861',   // One-Arm Dumbbell Row
   cableFacePull:  '0238',   // Cable Face Pull
   cableRearDelt:  '0192',   // Cable Rear-Delt Fly
-  incDbCurl:      '0314',   // Dumbbell Incline Curl (using inc db press ID — will mark as curl)
+  incDbCurl:      '0314',   // Dumbbell Incline Curl
   dbHammerCurl:   '0334',   // Dumbbell Hammer Curl
   rdl:            '0085',   // Romanian Deadlift
   legPress:       '2287',   // Leg Press
@@ -25,24 +25,31 @@ const M = {
   standingCalf:   '1372',   // Standing Calf Raise
   revCrunch:      '0872',   // Reverse Crunch
   incDbPress:     '0314',   // Incline Dumbbell Press
+  seatedRow:      '0861',   // Cable Seated Row
+  preacherCurl:   '0592',   // Lever Preacher Curl Machine
+  splitSquat:     '0410',   // Dumbbell Single Leg Split Squat
 
   // Custom exercises
-  cableFly:     'c_cableFly',
-  pecDeck:      'c_pecDeckFly',
-  legCurl:      'c_legCurl',
-  cableRdFly:   'c_cableRearDeltFly',
-  facePull:     'c_facePull',
-  incCurl:      'c_incCurl',
+  cableFly:      'c_cableFly',
+  pecDeck:       'c_pecDeckFly',
+  legCurl:       'c_legCurl',
+  cableRdFly:    'c_cableRearDeltFly',
+  facePull:      'c_facePull',
+  incCurl:       'c_incCurl',
+  straightArmPD: 'c_straightArmPD',
+  revPecDeck:    'c_revPecDeck',
 }
 
 // ── Custom exercises ─────────────────────────────────────────────────────────
 const customEx = [
-  { id: M.cableFly,   n: 'Cable Fly (Double Pulley)',   bp: 'chest',       tg: 'pectorals',  eq: 'cable',    sm: [], st: [] },
-  { id: M.pecDeck,    n: 'Pec Deck Fly',                bp: 'chest',       tg: 'pectorals',  eq: 'machine',  sm: [], st: [] },
-  { id: M.legCurl,    n: 'Leg Curl Machine',            bp: 'upper legs',  tg: 'hamstrings', eq: 'machine',  sm: [], st: [] },
-  { id: M.cableRdFly, n: 'Cable Rear-Delt Fly',        bp: 'shoulders',   tg: 'deltoids',   eq: 'cable',    sm: [], st: [], uni: true },
-  { id: M.facePull,   n: 'Cable Face Pull',             bp: 'shoulders',   tg: 'deltoids',   eq: 'cable',    sm: [], st: [] },
-  { id: M.incCurl,    n: 'Dumbbell Incline Curl',       bp: 'upper arms',  tg: 'biceps',     eq: 'dumbbell', sm: [], st: [], uni: true },
+  { id: M.cableFly,      n: 'Cable Fly (Double Pulley)',     bp: 'chest',       tg: 'pectorals',  eq: 'cable',    sm: [], st: [] },
+  { id: M.pecDeck,       n: 'Pec Deck Fly',                  bp: 'chest',       tg: 'pectorals',  eq: 'machine',  sm: [], st: [] },
+  { id: M.legCurl,       n: 'Leg Curl Machine',              bp: 'upper legs',  tg: 'hamstrings', eq: 'machine',  sm: [], st: [] },
+  { id: M.cableRdFly,    n: 'Cable Rear-Delt Fly',          bp: 'shoulders',   tg: 'deltoids',   eq: 'cable',    sm: [], st: [], uni: true },
+  { id: M.facePull,      n: 'Cable Face Pull',               bp: 'shoulders',   tg: 'deltoids',   eq: 'cable',    sm: [], st: [] },
+  { id: M.incCurl,       n: 'Dumbbell Incline Curl',         bp: 'upper arms',  tg: 'biceps',     eq: 'dumbbell', sm: [], st: [], uni: true },
+  { id: M.straightArmPD, n: 'Straight-Arm Cable Pulldown',   bp: 'back',        tg: 'lats',       eq: 'cable',    sm: [], st: [] },
+  { id: M.revPecDeck,    n: 'Reverse Pec Deck',              bp: 'shoulders',   tg: 'deltoids',   eq: 'machine',  sm: [], st: [] },
 ]
 
 // ── Routines ─────────────────────────────────────────────────────────────────
@@ -57,10 +64,10 @@ const rPushA = { id: uid(), name: 'Push A', emoji: 'pushpin', ex: [
 
 const rPullA = { id: uid(), name: 'Pull A', emoji: 'magnet', ex: [
   { id: M.latPulldown,   sets: 3, reps: 12, weight: 40 },
-  { id: M.oneArmRow,     sets: 3, reps: 12, weight: 17.5 },
-  { id: M.cableRdFly,    sets: 2, reps: 15, weight: 10 },
-  { id: M.facePull,      sets: 2, reps: 15, weight: 20 },
-  { id: M.incCurl,       sets: 3, reps: 12, weight: 7.5 },
+  { id: M.seatedRow,     sets: 3, reps: 12, weight: 40 },
+  { id: M.straightArmPD, sets: 2, reps: 15, weight: 25 },
+  { id: M.revPecDeck,    sets: 2, reps: 15, weight: 15 },
+  { id: M.preacherCurl,  sets: 3, reps: 12, weight: 20 },
   { id: M.dbHammerCurl,  sets: 2, reps: 12, weight: 7.5 },
 ]}
 
@@ -91,7 +98,14 @@ const rPullB = { id: uid(), name: 'Pull B', emoji: 'magnet', ex: [
   { id: M.dbHammerCurl,  sets: 2, reps: 12, weight: 7.5 },
 ]}
 
-const rLegsB = { id: uid(), name: 'Legs B + Core', emoji: 'leg', ex: [] }
+const rLegsB = { id: uid(), name: 'Legs B + Core', emoji: 'leg', ex: [
+  { id: M.splitSquat,    sets: 3, reps: 10, weight: 12 },
+  { id: M.legPress,      sets: 3, reps: 12, weight: 70 },
+  { id: M.legCurl,       sets: 3, reps: 12, weight: 20 },
+  { id: M.rdl,           sets: 2, reps: 12, weight: 25 },
+  { id: M.standingCalf,  sets: 3, reps: 15, weight: 0  },
+  { id: M.revCrunch,     sets: 2, reps: 15, weight: 0  },
+]}
 
 const routines = [rPushA, rPullA, rLegsA, rPushB, rPullB, rLegsB]
 const week = { 1: rPushA.id, 2: rPullA.id, 3: rLegsA.id, 4: rPushB.id, 5: rPullB.id, 6: rLegsB.id }
