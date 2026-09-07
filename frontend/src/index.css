@@ -177,12 +177,12 @@ body.resting #app{padding-bottom:calc(250px + var(--sab))}
 .hdr .sub{color:var(--label-2);font-size:15px;letter-spacing:-.006em;margin-top:4px}
 
 .iconbtn{
-  width:36px;height:36px;border-radius:50%;flex:none;
+  width:42px;height:42px;border-radius:50%;flex:none;
   background:var(--surface);color:var(--label);
-  display:flex;align-items:center;justify-content:center;font-size:18px;
+  display:flex;align-items:center;justify-content:center;font-size:20px;
   transition:background var(--fast),transform var(--fast);
 }
-.iconbtn:active{background:var(--surface-2);transform:scale(.92)}
+.iconbtn:active{background:var(--surface-2);transform:scale(.90)}
 .iconbtn.on-ss{background:var(--acc-soft);color:var(--acc)}
 
 h4.sec{
@@ -200,8 +200,8 @@ h4.sec{
 
 /* ----------------------------------------------------------------- card -- */
 .card{
-  background:var(--surface);border-radius:var(--r-card);
-  padding:16px;margin-bottom:12px;
+  background:var(--surface);border-radius:var(--r-lg);
+  padding:18px;margin-bottom:14px;
 }
 .card .big{font-size:30px;font-weight:600;letter-spacing:-.026em;line-height:1.1}
 
@@ -215,22 +215,22 @@ h4.sec{
 .sect-f{font-size:13px;color:var(--label-2);padding:7px 4px 0;line-height:1.38}
 
 .lrow{
-  display:flex;align-items:center;gap:12px;width:100%;text-align:left;
-  padding:11px 14px;min-height:46px;position:relative;color:var(--label);
+  display:flex;align-items:center;gap:14px;width:100%;text-align:left;
+  padding:13px 16px;min-height:54px;position:relative;color:var(--label);
   background:none;
 }
 /* hairline starts after the icon rail so the list reads as one object */
 .lrow+.lrow::before{
-  content:'';position:absolute;left:14px;right:0;top:0;height:var(--hair);background:var(--sep);
+  content:'';position:absolute;left:16px;right:0;top:0;height:var(--hair);background:var(--sep);
 }
-.lrow:has(.lrow-i)+.lrow:has(.lrow-i)::before{left:55px}
+.lrow:has(.lrow-i)+.lrow:has(.lrow-i)::before{left:62px}
 .lrow.tap:active{background:var(--surface-2)}
 .lrow-i{
-  width:29px;height:29px;border-radius:7px;flex:none;font-size:18px;
+  width:36px;height:36px;border-radius:9px;flex:none;font-size:20px;
   display:flex;align-items:center;justify-content:center;
   background:var(--tint,var(--acc));color:#fff;
 }
-.lrow-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.lrow-m{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .lrow-t{font-size:17px;letter-spacing:-.012em;line-height:1.25}
 .lrow-s{font-size:13px;color:var(--label-2);line-height:1.3}
 /* flex:none would let a long value ("Follow the routine (Linear progression)") run straight
@@ -275,41 +275,42 @@ h4.sec{
 #tabbar{
   position:fixed;left:0;right:0;bottom:0;z-index:50;
   display:flex;justify-content:space-around;align-items:flex-end;
-  padding:7px 6px calc(6px + var(--sab));
-  background:color-mix(in srgb,var(--bg-el) 72%,transparent);
-  backdrop-filter:saturate(180%) blur(24px);-webkit-backdrop-filter:saturate(180%) blur(24px);
+  padding:10px 6px calc(10px + var(--sab));
+  background:color-mix(in srgb,var(--bg-el) 82%,transparent);
+  backdrop-filter:saturate(180%) blur(28px);-webkit-backdrop-filter:saturate(180%) blur(28px);
   border-top:var(--hair) solid var(--sep-op);
 }
-:root[data-theme="light"] #tabbar{background:rgba(249,249,251,.78)}
+:root[data-theme="light"] #tabbar{background:rgba(249,249,251,.88)}
 #tabbar button{
-  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
-  color:var(--label-3);font-size:10px;font-weight:500;letter-spacing:.005em;padding-top:3px;
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  color:var(--label-3);font-size:11px;font-weight:500;letter-spacing:.005em;padding-top:4px;
   transition:color var(--fast);
+  min-width:52px;
 }
 /* The inactive tint is semi-transparent, so wherever two strokes cross inside an
    icon (the calendar's hangers over its frame, the divider's caps on its sides)
    the alpha doubled up and the icon read as a stack of loose layers. Carrying the
    fade on the <svg> instead of in the stroke colour flattens the icon first and
    fades it as one shape — and it does that for every icon, not just this one. */
-#tabbar button .icn{font-size:25px;--icon-stroke:1.65;color:var(--label)}
+#tabbar button .icn{font-size:28px;--icon-stroke:1.6;color:var(--label)}
 #tabbar button.on{color:var(--acc)}
-#tabbar button.on .icn{--icon-stroke:2;color:inherit;opacity:1}
-#tabbar button.start{margin-top:-24px}
+#tabbar button.on .icn{--icon-stroke:2.1;color:inherit;opacity:1}
+#tabbar button.start{margin-top:-28px}
 #tabbar button.start .cir{
-  width:52px;height:52px;border-radius:50%;background:var(--acc);color:var(--on-acc);
+  width:60px;height:60px;border-radius:50%;background:var(--acc);color:var(--on-acc);
   display:flex;align-items:center;justify-content:center;position:relative;
-  box-shadow:0 6px 18px -4px color-mix(in srgb,var(--acc) 55%,transparent);
+  box-shadow:0 8px 24px -4px color-mix(in srgb,var(--acc) 65%,transparent);
   transition:transform var(--fast) var(--ease);
 }
-#tabbar button.start:active .cir{transform:scale(.93)}
-#tabbar button.start .cir .icn{font-size:26px;--icon-stroke:2;color:inherit;opacity:1}
-#tabbar button.start span{color:var(--acc);font-weight:600}
+#tabbar button.start:active .cir{transform:scale(.91)}
+#tabbar button.start .cir .icn{font-size:30px;--icon-stroke:2.1;color:inherit;opacity:1}
+#tabbar button.start span{color:var(--acc);font-weight:600;font-size:11px}
 /* `.cir` is itself a <span>, so the label rules above and below reach it too and
    outrank the `.cir` block — which is how the running state ended up painting an
    orange play glyph onto an orange disc. Both states restate their own colour.
    The disc is orange in either theme, so its glyph is black, not `--on-acc`. */
 #tabbar button.start .cir{color:var(--on-acc)}
-#tabbar button.start.rec .cir{background:var(--orange);color:#000;box-shadow:0 6px 18px -4px color-mix(in srgb,var(--orange) 55%,transparent)}
+#tabbar button.start.rec .cir{background:var(--orange);color:#000;box-shadow:0 8px 24px -4px color-mix(in srgb,var(--orange) 65%,transparent)}
 #tabbar button.start.rec span{color:var(--orange)}
 #tabbar button.start.rec .cir::after{
   content:'';position:absolute;inset:0;border-radius:50%;
@@ -354,8 +355,8 @@ h4.sec{
 .item .grow{flex:1;min-width:0}
 .chev{color:var(--label);flex:none;font-size:15px;--icon-stroke:2.4}
 .tag{
-  display:inline-flex;align-items:center;gap:3px;background:var(--surface-2);
-  color:var(--label-2);border-radius:6px;padding:3px 7px;font-size:12px;
+  display:inline-flex;align-items:center;gap:4px;background:var(--surface-2);
+  color:var(--label-2);border-radius:20px;padding:4px 10px;font-size:12px;
   font-weight:500;text-transform:capitalize;
 }
 .tag.acc{background:var(--acc-soft);color:var(--acc)}
@@ -567,7 +568,7 @@ h4.sec{
 .setrow .stp.w{flex:1.4;min-width:0}
 .setrow .stp.r{flex:1;min-width:0}
 .setrow .stp.eff{flex:1.1;min-width:0}
-.setrow .stp button{width:32px;height:40px}
+.setrow .stp button{width:36px;height:48px}
 /* a 3rd stepper (RIR) needs narrower buttons and a tighter row gap to fit next to weight+reps
    on narrow phones, same technique as the exercise-config sheet's three-steppers-in-a-row
    (.cfgrow below) — RIR's own value is short ("1.5") so its buttons shrink the most, weight/reps
