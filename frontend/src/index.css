@@ -115,7 +115,7 @@ body{
   background:var(--bg);color:var(--label);
   font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','SF Pro Display','Segoe UI',Roboto,system-ui,sans-serif;
   font-size:17px;line-height:1.29;letter-spacing:-.01em;
-  min-height:100vh;overscroll-behavior-y:none;overflow-x:clip;
+  min-height:100dvh;overscroll-behavior-y:none;overflow-x:clip;
   -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
   touch-action:manipulation;
   font-variant-numeric:tabular-nums;
@@ -555,7 +555,7 @@ h4.sec{
 .sethead .r-sp{flex:1;text-align:center}
 .sethead .eff-sp{text-align:center}
 .sethead .ck-sp{width:30px;flex:none}
-.setrow{display:flex;align-items:center;gap:8px;padding:7px 0;position:relative}
+.setrow{display:flex;align-items:center;gap:8px;padding:7px 0;position:relative;min-height:48px}
 .setrow+.setrow::before{
   content:'';position:absolute;left:32px;right:0;top:0;height:var(--hair);background:var(--sep);
 }

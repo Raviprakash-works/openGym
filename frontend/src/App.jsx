@@ -14,6 +14,8 @@ import ErrorBoundary from './components/ErrorBoundary.jsx'
 import Modals from './components/Modals.jsx'
 import Toast from './components/Toast.jsx'
 import RestTimer from './components/RestTimer.jsx'
+import OfflineBanner from './components/OfflineBanner.jsx'
+import InstallPrompt from './components/InstallPrompt.jsx'
 import Login from './views/Login.jsx'
 import Home from './views/Home.jsx'
 import Plan from './views/Plan.jsx'
@@ -50,6 +52,18 @@ function Shell() {
   // bound to the workout, not to the route — checking Stats mid-session keeps the screen on
   useWakeLock(!!S.active && S.keepAwake !== false)
 
+  // Android hardware back button — navigate in-app rather than exiting
+  useEffect(() => {
+    const onBack = (e) => {
+      if (loc.pathname !== '/home') {
+        e.preventDefault()
+        navigate(-1)
+      }
+    }
+    window.addEventListener('popstate', onBack)
+    return () => window.removeEventListener('popstate', onBack)
+  }, [loc.pathname, navigate])
+
   const authed = user || isGuest
   if (!ready && !authed) return (
     <div id="app">
@@ -61,6 +75,7 @@ function Shell() {
 
   return (
     <>
+      <OfflineBanner />
       {/* keyed on the route: a view that throws is contained, and switching tabs
           re-mounts the boundary, so the tab bar is always a way out */}
       <div id="app" className="vfade" key={loc.pathname}>
@@ -85,6 +100,7 @@ function Shell() {
       <RestTimer />
       <Modals />
       <Toast />
+      <InstallPrompt />
     </>
   )
 }

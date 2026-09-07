@@ -109,12 +109,16 @@ export default function Login() {
           </div>
           <input 
             className="input" 
-            type="text" 
-            placeholder={t('Login code')} 
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder={t('6-digit code')} 
             value={otp} 
-            onChange={e => setOtp(e.target.value)} 
-            style={{ marginBottom: 12, textAlign: 'center', letterSpacing: '.2em', fontWeight: 'bold' }}
+            onChange={e => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            onFocus={e => setTimeout(() => e.target.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300)}
+            style={{ marginBottom: 12, textAlign: 'center', letterSpacing: '.3em', fontWeight: 'bold', fontSize: 22 }}
             maxLength={6}
+            autoComplete="one-time-code"
             disabled={loading}
           />
           <Button variant="primary" icon="sparkles" onClick={verifyOtp} disabled={loading}>
