@@ -32,7 +32,13 @@ export default function Login() {
     setLoading(false)
     
     if (error) {
-      useUI.getState().toast(error.message || t('Failed to send login code'))
+      if (error.message?.includes('504') || error.status === 504) {
+        useUI.getState().toast(t('504 Timeout: In Supabase SMTP, change Port from 465 to 587'))
+      } else if (error.message?.includes('magic link')) {
+        useUI.getState().toast(t('Email rejected: Resend test sender only sends to your Resend account email'))
+      } else {
+        useUI.getState().toast(error.message || t('Failed to send login code'))
+      }
       console.error('OTP send error:', error)
     } else {
       setStep(2)
