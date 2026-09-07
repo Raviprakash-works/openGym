@@ -91,11 +91,11 @@ export default function Settings() {
       <div style={{ flex: 1, marginLeft: 10 }}><h1>{t('Settings')}</h1></div>
     </div>
 
-    {/* ---------- account (demo and mobile builds have nothing to sign in to) ---------- */}
-    <Section title={MOBILE ? t('Your data') : DEMO ? t('Demo') : t('Account')}>
+    {/* ---------- account ---------- */}
+    <Section title={t('Account')}>
         
         {/* ChatGPT Migration Button */}
-        {user && <Row icon="sparkles" iconTint="var(--blue)" title={t('Import Historical Data')} subtitle={t('Populate openGym with your ChatGPT workout history.')} accessory="chevron"
+        <Row icon="sparkles" iconTint="var(--blue)" title={t('Import Historical Data')} subtitle={t('Populate openGym with your ChatGPT workout history.')} accessory="chevron"
           onClick={async () => {
             const { migrationState } = await import('../lib/migrationData.js')
             update(s => {
@@ -109,31 +109,22 @@ export default function Settings() {
             await pushState()
             toast(t('History imported!'))
             nav('/home')
-          }} />}
+          }} />
 
-        {MOBILE ? <>
-        <Row icon="lock" iconTint="var(--acc)" title={t('All data stays on this phone')} subtitle={t('No account, no cloud — back it up anytime with Export below.')} />
-        <Row icon="rocket" iconTint="var(--indigo)" title={t('Self-host openGym')} subtitle={t('Passkey sign-in, sync across your devices, your own data.')} accessory="chevron"
-          onClick={() => window.open(REPO, '_blank', 'noopener')} />
-      </> : DEMO ? <>
-        <Row icon="sparkles" iconTint="var(--acc)" title={t('You’re in the demo')} subtitle={t('Example data, stored only in this browser — change anything you like.')} />
-        <Row icon="reset" iconTint="var(--blue)" title={t('Reset demo data')} accessory="chevron"
-          onClick={() => confirmSheet({ title: t('Reset demo data?'), message: t('Puts the example plan, workouts and weigh-ins back the way they started.'), confirmText: t('Reset'), onConfirm: () => { resetDemo(); nav('/home'); toast(t('Demo data reset')) } })} />
-        <Row icon="rocket" iconTint="var(--indigo)" title={t('Self-host openGym')} subtitle={t('Passkey sign-in, sync across your devices, your own data.')} accessory="chevron"
-          onClick={() => window.open(REPO, '_blank', 'noopener')} />
-      </> : user ? <>
-        <Row icon="personCircle" iconTint="var(--grey)" title={user.name} subtitle={t('Signed in with passkey — data syncs to this profile.')} />
-        {user.admin && <Row icon="wrench" iconTint="var(--indigo)" title={t('Admin dashboard')} accessory="chevron" onClick={() => nav('/admin')} />}
-        <Row icon="signOut" iconTint="var(--red)" title={t('Sign out')} danger onClick={() => confirmSheet({ title: t('Sign out?'), message: t('Your data is synced to your profile first, then cleared from this device.'), confirmText: t('Sign out'), danger: true, onConfirm: () => { signOut(); nav('/home') } })} />
-        <Row icon="shield" iconTint="var(--red)" title={t('Sign out everywhere')} subtitle={t('Ends this profile’s sessions on all your devices.')} danger onClick={signOutEverywhere} />
-      </> : webauthnOK() ? <>
-        <Row icon="sparkles" iconTint="var(--acc)" title={t('Create passkey profile')} subtitle={t('Keeps your data safe and separate per person.')} accessory="chevron" onClick={registerHere} />
-        <Row icon="person" iconTint="var(--blue)" title={t('Sign in with passkey')} accessory="chevron" onClick={signInHere} />
-      </> : (
-        <Row icon="lock" iconTint="var(--grey)" title={t('Passkeys not supported in this browser.')} />
-      )}
+        {user ? <>
+          <Row icon="personCircle" iconTint="var(--acc)" title={user.email} subtitle={t('Signed in with Email OTP — cloud sync active')} />
+          <Row icon="signOut" iconTint="var(--red)" title={t('Sign out')} danger onClick={() => confirmSheet({
+            title: t('Sign out?'),
+            message: t('Your data is saved to Supabase cloud. You can sign in anytime with your email.'),
+            confirmText: t('Sign out'),
+            danger: true,
+            onConfirm: async () => { await signOut(); nav('/login') }
+          })} />
+        </> : <>
+          <Row icon="person" iconTint="var(--acc)" title={t('Log in with Email')} subtitle={t('Sign in with a 6-digit code to sync workouts to the cloud')} accessory="chevron" onClick={() => nav('/login')} />
+        </>}
     </Section>
-    {!user && !DEMO && !MOBILE && <p className="sect-f" style={{ marginTop: -18, marginBottom: 22 }}>{t('Guest mode — data lives only in this browser.')}</p>}
+    {!user && <p className="sect-f" style={{ marginTop: -18, marginBottom: 22 }}>{t('Currently in guest mode — log in with your email to keep your data synced.')}</p>}
 
     {/* ---------- general ---------- */}
     <Section title={t('General')} footer={t('Note: switching units only changes the label — logged numbers are not converted.')}>

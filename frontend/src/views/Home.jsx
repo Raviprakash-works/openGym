@@ -47,10 +47,35 @@ export default function Home() {
   // today's session shown right under the week strip
   const onToday = () => { if (S.active) nav('/workout'); else if (routine) startFlow(routine.id); else dayOverrideSheet(todayISO()) }
 
+  const displayName = user?.name || (user?.email ? user.email.split('@')[0] : null)
+
   return <div className="narrow">
     <div className="hdr">
-      <div><h1>{user ? t('Hi {0}', user.name) : 'openGym'}</h1><div className="sub">{today.toLocaleDateString(dateLocale(), { weekday: 'long', day: 'numeric', month: 'long' })}</div></div>
-      <button className="iconbtn" onClick={() => nav('/settings')} aria-label={t('Settings')}><Icon name="gear" /></button>
+      <div><h1>{displayName ? t('Hi {0}', displayName) : 'openGym'}</h1><div className="sub">{today.toLocaleDateString(dateLocale(), { weekday: 'long', day: 'numeric', month: 'long' })}</div></div>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {!user && (
+          <button
+            onClick={() => nav('/login')}
+            style={{
+              background: 'var(--acc-soft)',
+              color: 'var(--acc)',
+              border: '1px solid var(--acc-line)',
+              borderRadius: 20,
+              padding: '6px 14px',
+              fontSize: 13,
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              cursor: 'pointer'
+            }}
+          >
+            <Icon name="person" />
+            <span>{t('Log in')}</span>
+          </button>
+        )}
+        <button className="iconbtn" onClick={() => nav('/settings')} aria-label={t('Settings')}><Icon name="gear" /></button>
+      </div>
     </div>
 
     <div className="card">
